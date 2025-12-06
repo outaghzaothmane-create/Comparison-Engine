@@ -1,0 +1,38 @@
+[
+    {
+        "id": "1",
+        "name": "Cal.com",
+        "description": "Scheduling infrastructure for everyone.",
+        "paid_alternative": "Calendly",
+        "paid_alternative_slug": "calendly",
+        "license": "AGPL-3.0",
+        "slug": "cal-com",
+        "url": "https://cal.com",
+        "github_url": "https://github.com/calcom/cal.com",
+        "stars": 35000
+    },
+    {
+        "id": "2",
+        "name": "Mattermost",
+        "description": "Secure collaboration for technical teams.",
+        "paid_alternative": "Slack",
+        "paid_alternative_slug": "slack",
+        "license": "MIT",
+        "slug": "mattermost",
+        "url": "https://mattermost.com",
+        "github_url": "https://github.com/mattermost/mattermost-server",
+        "stars": 28000
+    },
+    {
+        "id": "3",
+        "name": "GitLab",
+        "description": "The One DevOps Platform.",
+        "paid_alternative": "GitHub",
+        "paid_alternative_slug": "github",
+        "license": "MIT",
+        "slug": "gitlab",
+        "url": "https://about.gitlab.com",
+        "github_url": "https://gitlab.com/gitlab-org/gitlab",
+        "stars": 45000
+    }
+]
