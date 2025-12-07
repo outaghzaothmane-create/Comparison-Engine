@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
 };
 
-import { SiteHeader } from "@/components/site-header";
+import { Navbar } from "@/components/navbar";
 import { SiteFooter } from "@/components/site-footer";
 
 // ... existing code ...
@@ -37,7 +37,7 @@ export default function RootLayout({
         className={`font-sans antialiased bg-black text-white min-h-screen overflow-x-hidden`}
       >
         <div className="flex min-h-screen flex-col">
-          <SiteHeader />
+          <Navbar />
           <main className="flex-1 w-full bg-black">{children}</main>
           <SiteFooter />
         </div>
