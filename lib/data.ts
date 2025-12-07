@@ -12,6 +12,9 @@ export interface Tool {
     license: string;
     category: string;
     website_url: string;
+    stars?: number;
+    last_updated?: string;
+    logo?: string;
 }
 
 export interface Category {
@@ -110,18 +113,34 @@ export function getToolsByCategory(slug: string): { tools: Tool[]; categoryName:
 /**
  * Search tools by name or description
  */
-export function searchTools(query: string): Tool[] {
-    const lowerQuery = query.toLowerCase().trim();
+import Fuse from 'fuse.js';
 
-    if (!lowerQuery) {
+/**
+ * Search tools using Fuzzy Search (Fuse.js)
+ */
+export function searchTools(query: string): Tool[] {
+    const trimmedQuery = query.trim();
+
+    if (!trimmedQuery) {
         return [];
     }
 
-    return (items as Tool[]).filter(item =>
-        item.name.toLowerCase().includes(lowerQuery) ||
-        item.description.toLowerCase().includes(lowerQuery) ||
-        item.paid_alternative.toLowerCase().includes(lowerQuery)
-    );
+    const fuseOptions = {
+        keys: [
+            { name: 'name', weight: 0.4 },
+            { name: 'paid_alternative', weight: 0.3 },
+            { name: 'description', weight: 0.2 },
+            { name: 'category', weight: 0.1 }
+        ],
+        threshold: 0.4, // Tolerance for typos (0.0 = exact, 1.0 = match anything)
+        ignoreLocation: true,
+        includeScore: true
+    };
+
+    const fuse = new Fuse(items as Tool[], fuseOptions);
+    const results = fuse.search(trimmedQuery);
+
+    return results.map(result => result.item);
 }
 
 /**

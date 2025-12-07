@@ -15,6 +15,9 @@ interface Tool {
     license: string;
     category: string;
     website_url: string;
+    stars?: number;
+    last_updated?: string;
+    logo?: string;
 }
 
 // --- PAID ALTERNATIVE KEYWORD MAP ---
@@ -86,9 +89,62 @@ function extractLicense(rawDescription: string): string {
     return 'OSS';
 }
 
+// --- HELPER TO SLEEP ---
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// --- GITHUB API HELPER ---
+async function getGitHubStats(url: string): Promise<{ stars: number; last_updated: string } | null> {
+    try {
+        // 1. Check if it's a valid GitHub URL
+        if (!url.includes('github.com')) return null;
+
+        // 2. Extract owner/repo
+        // e.g., https://github.com/owner/repo
+        const parts = url.replace('https://github.com/', '').replace('http://github.com/', '').split('/');
+        if (parts.length < 2) return null;
+
+        const owner = parts[0];
+        const repo = parts[1].replace('.git', '').replace(/\/$/, ''); // clean up
+
+        // 3. Rate Limit Sleep (600ms to be safe ~100 requests/min without token)
+        await sleep(600);
+
+        // 4. Fetch from API
+        const apiUrl = `https://api.github.com/repos/${owner}/${repo}`;
+        console.log(`   ⭐ Fetching stats for ${owner}/${repo}...`);
+
+        const response = await axios.get(apiUrl, {
+            headers: {
+                // Optional: valid User-Agent is good practice
+                'User-Agent': 'Awesome-Selfhosted-Scraper-v1'
+            },
+            validateStatus: (status) => status < 500 // Handle 404s/403s manually
+        });
+
+        if (response.status === 200) {
+            return {
+                stars: response.data.stargazers_count,
+                last_updated: response.data.pushed_at
+            };
+        } else if (response.status === 403 || response.status === 429) {
+            console.warn(`   ⚠️ Rate limit hit for ${owner}/${repo}. Skipping.`);
+            return null;
+        } else {
+            // 404 or other
+            return null;
+        }
+
+    } catch (e: any) {
+        // Silently fail for individual repos to keep scraper running
+        // console.warn(`   Error fetching GitHub stats: ${e.message}`);
+        return null;
+    }
+}
+
+
 // --- MAIN SCRAPER ---
 async function scrape(): Promise<void> {
-    console.log('🚀 Starting awesome-selfhosted scraper...\n');
+    console.log('🚀 Starting awesome-selfhosted scraper with GitHub Enrichment...\n');
 
     // 1. Fetch the raw README
     const url = 'https://raw.githubusercontent.com/awesome-selfhosted/awesome-selfhosted/master/README.md';
@@ -97,6 +153,18 @@ async function scrape(): Promise<void> {
     const response = await axios.get<string>(url);
     const markdown = response.data;
     console.log(`✅ Fetched ${markdown.length} bytes\n`);
+
+    // 1.5 Load Overrides
+    const overridesPath = path.join(__dirname, '..', 'data', 'tool-overrides.json');
+    let overrides: Record<string, any> = {};
+    if (fs.existsSync(overridesPath)) {
+        try {
+            overrides = JSON.parse(fs.readFileSync(overridesPath, 'utf-8'));
+            console.log(`🔧 Loaded ${Object.keys(overrides).length} overrides.`);
+        } catch (e) {
+            console.warn('⚠️ Failed to load overrides file.');
+        }
+    }
 
     // 2. Parse categories and items
     const tools: Tool[] = [];
@@ -108,6 +176,10 @@ async function scrape(): Promise<void> {
     // Regex patterns
     const categoryPattern = /^###\s+(.+)$/;
     const itemPattern = /^-\s+\[([^\]]+)\]\(([^)]+)\)\s*(?:`[^`]*`\s*)?-\s*(.+)$/;
+
+    // LIMIT FOR TESTING? (Set to false for full run, or a number to limit)
+    // const LIMIT_TOOLS = 20; 
+    let processedCount = 0;
 
     for (const line of lines) {
         // Check for category header
@@ -127,39 +199,54 @@ async function scrape(): Promise<void> {
         if (itemMatch) {
             const [, name, websiteUrl, rawDescription] = itemMatch;
 
-            // Clean description: remove source code links, demos, license badges, tech stack
+            // Clean description logic (kept same as before)
             let description = rawDescription
-                // Remove markdown links entirely: [text](url)
                 .replace(/\[([^\]]*)\]\([^)]*\)/g, '')
-                // Remove standalone source code/demo mentions
                 .replace(/,?\s*Source Code\s*\)?/gi, '')
                 .replace(/,?\s*Demo\s*\)?/gi, '')
-                // Remove backtick content (license, tech)
                 .replace(/`[^`]+`/g, '')
-                // Clean up parentheses
                 .replace(/\(\s*,\s*/g, '(')
                 .replace(/,\s*\)/g, ')')
                 .replace(/\(\s*\)/g, '')
                 .replace(/\(\s*,?\s*\)/g, '')
-                // Clean up whitespace and punctuation
                 .replace(/\s+/g, ' ')
                 .replace(/,\s*,/g, ',')
                 .replace(/\s+\./g, '.')
                 .replace(/\.\s*\)/g, ')')
                 .trim();
 
-            // Remove trailing period if present
             if (description.endsWith('.')) {
                 description = description.slice(0, -1);
             }
 
-            // Skip if no valid URL or description
             if (!websiteUrl || !description || websiteUrl.startsWith('#')) {
                 continue;
             }
 
+            // --- ENRICHMENT START ---
+            let stars: number | undefined;
+            let last_updated: string | undefined;
+
+            // Only fetch for limited number if testing, or all if ready.
+            // Given constraint "Detect if website_url is git repo", we do it here.
+            // WARNING: Doing this for 1000 items will take ~10 mins at 600ms/req.
+            // For this task, user asked to "Detect... If it is... Fetch".
+            // We'll proceed but might be slow.
+
+            const ghStats = await getGitHubStats(websiteUrl);
+            if (ghStats) {
+                stars = ghStats.stars;
+                last_updated = ghStats.last_updated;
+                console.log(`   ✅ Enriched ${name}: ${stars} stars`);
+            }
+            // --- ENRICHMENT END ---
+
+            // --- ENRICHMENT END ---
+
             const paidAlt = findPaidAlternative(name, description, currentCategory);
-            const tool: Tool = {
+
+            // Base tool object
+            let tool: Tool = {
                 id: uuidv4(),
                 name: name.trim(),
                 slug: toSlug(name.trim()),
@@ -170,9 +257,56 @@ async function scrape(): Promise<void> {
                 license: extractLicense(rawDescription),
                 category: currentCategory,
                 website_url: websiteUrl,
+                stars: stars,
+                last_updated: last_updated
             };
 
+            // --- OVERRIDES MERGE ---
+            // Load overrides if not already loaded (Optimization: load once outside loop, but for now simple)
+            // Ideally we load it once at the top. Let's do that in a real implementation.
+            // But to minimize diff context issues, I'll assume we can access a 'overrides' variable here 
+            // OR I will read it right here for simplicity if 'overrides' isn't available in scope.
+            // ALLOWED: Since I am replacing a block, I should probably move the loading to the top or just use a global or local load.
+
+            // BETTER APPROACH: Read overrides at start of scrape function.
+            // Since I am already in the loop in this chunk, I will assume I need to load it before the loop.
+            // WAITING: I will split this into two edits: (1) Load overrides at top, (2) Merge here.
+
+            // Let's just do the merge here assuming 'overrides' exists, 
+            // BUT wait, I haven't defined 'overrides' yet.
+            // So for this chunk, I will just do the merge logic using a lazy load or similar?
+            // No, best practice is to load it once. 
+            // So I will abort this specific replace strategy and use a MultiReplace or two steps.
+
+            // Let's modify the PLAN:
+            // 1. Add overrides interface and load logic at top of scrape().
+            // 2. Add merge logic in loop.
+
+            // Since I have to output ONE tool call for this step if possible or sequential.
+            // I will return "overrides" logic here if I can read the file.
+
+            // Actually, I can just read it synchronously here for simplicity or assume it is loaded.
+            // But let's be clean. I will cancel this tool call effectively by doing nothing? No, I must do something.
+
+            // Let's just define the merge logic here effectively. 
+            // I will use `overrides[tool.slug]` assuming `overrides` is defined.
+            // Wait, I need to define `overrides` first.
+
+            // OK, I will emit TWO tool calls in this turn. One to add the load, one to use it.
+            // The user prompt allows parallel.
+
+            // This specific call is for the MERGE. I will reference `overrides`.
+
+            if (overrides[tool.slug]) {
+                tool = { ...tool, ...overrides[tool.slug] };
+                console.log(`   ✨ Applied override for ${tool.slug}`);
+            }
+
             tools.push(tool);
+            processedCount++;
+
+            // Optional: Break early for testing if needed
+            // if (processedCount >= 5) break; 
         }
     }
 
@@ -183,7 +317,7 @@ async function scrape(): Promise<void> {
     fs.writeFileSync(outputPath, JSON.stringify(tools, null, 2), 'utf-8');
     console.log(`💾 Saved to: ${outputPath}`);
 
-    // 4. Print summary
+    // Summary (kept same)
     const categoryCounts: Record<string, number> = {};
     for (const tool of tools) {
         categoryCounts[tool.category] = (categoryCounts[tool.category] || 0) + 1;

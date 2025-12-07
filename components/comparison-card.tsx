@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import Image from "next/image"
+import { ToolLogo } from "@/components/ui/tool-logo"
 import {
     Card,
     CardContent,
@@ -22,18 +22,10 @@ interface Item {
     website_url: string
     category?: string
     stars?: number
+    logo?: string
 }
 
 export function ComparisonCard({ item }: { item: Item }) {
-    const getLogoUrl = (url: string) => {
-        try {
-            const hostname = new URL(url).hostname;
-            return `https://www.google.com/s2/favicons?domain=${hostname}&sz=128`;
-        } catch (e) {
-            return "/window.svg";
-        }
-    };
-
     return (
         <Card className="bg-zinc-900/50 border-white/10 hover:border-white/20 transition-all duration-300 flex flex-col h-full group relative overflow-hidden">
             <a
@@ -45,17 +37,8 @@ export function ComparisonCard({ item }: { item: Item }) {
                 <span className="sr-only">Visit {item.name} website</span>
             </a>
             <CardHeader className="pb-3 text-left">
-                <div className="flex items-start gap-4 min-w-0">
-                    <div className="relative h-12 w-12 shrink-0 rounded-xl bg-white/5 p-2 ring-1 ring-white/10 overflow-hidden">
-                        <Image
-                            src={getLogoUrl(item.website_url)}
-                            alt={`${item.name} logo`}
-                            width={48}
-                            height={48}
-                            className="object-contain w-full h-full"
-                            unoptimized
-                        />
-                    </div>
+                <div className="flex items-start min-w-0">
+                    <ToolLogo slug={item.slug} url={item.website_url} customLogo={item.logo} />
                     <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start gap-2">
                             <CardTitle className="text-lg font-bold text-white tracking-tight flex-1 min-w-0 pr-2">

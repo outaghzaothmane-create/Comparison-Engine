@@ -15,7 +15,7 @@ export default function CategoriesPage() {
     const totalTools = categories.reduce((sum, cat) => sum + cat.count, 0);
 
     return (
-        <main className="min-h-screen bg-background text-foreground">
+        <div className="bg-background text-foreground">
             {/* Hero */}
             <div className="bg-gradient-to-b from-zinc-900 to-background border-b border-white/5 py-12 md:py-16">
                 <div className="container mx-auto px-4 max-w-6xl">
@@ -51,18 +51,6 @@ export default function CategoriesPage() {
                 </div>
             </div>
 
-            {/* Footer */}
-            <footer className="mt-auto border-t border-white/5 py-8">
-                <div className="container mx-auto px-4">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-zinc-500">
-                        <p>© 2025 Open Source Directory. All rights reserved.</p>
-                        <nav className="flex gap-4">
-                            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-                            <Link href="/categories" className="hover:text-white transition-colors">Categories</Link>
-                        </nav>
-                    </div>
-                </div>
-            </footer>
-        </main>
+        </div>
     );
 }

@@ -25,7 +25,7 @@ export default async function Home({ searchParams }: PageProps) {
   const { data: tools, total, page, totalPages } = getAllTools(currentPage, 20, query);
 
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col">
+    <div className="flex flex-col bg-black text-white">
       <SearchHero />
 
       <div className="container mx-auto px-4 py-8 md:px-8 md:py-12 lg:px-12 lg:py-20 max-w-7xl">
@@ -70,18 +70,6 @@ export default async function Home({ searchParams }: PageProps) {
         </Suspense>
       </div>
 
-      {/* Footer */}
-      <footer className="mt-auto border-t border-white/5 py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-zinc-500">
-            <p>© 2025 Open Source Directory. All rights reserved.</p>
-            <nav className="flex gap-4">
-              <Link href="/" className="hover:text-white transition-colors">Home</Link>
-              <Link href="/categories" className="hover:text-white transition-colors">Categories</Link>
-            </nav>
-          </div>
-        </div>
-      </footer>
-    </main>
+    </div>
   );
 }

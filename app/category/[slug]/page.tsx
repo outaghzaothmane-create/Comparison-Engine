@@ -63,7 +63,7 @@ export default async function CategoryPage({ params }: PageProps) {
     };
 
     return (
-        <main className="min-h-screen bg-background text-foreground">
+        <div className="bg-background text-foreground">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -113,18 +113,6 @@ export default async function CategoryPage({ params }: PageProps) {
                 </div>
             </div>
 
-            {/* Footer */}
-            <footer className="mt-auto border-t border-white/5 py-8">
-                <div className="container mx-auto px-4">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-zinc-500">
-                        <p>© 2025 Open Source Directory. All rights reserved.</p>
-                        <nav className="flex gap-4">
-                            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-                            <Link href="/categories" className="hover:text-white transition-colors">Categories</Link>
-                        </nav>
-                    </div>
-                </div>
-            </footer>
-        </main>
+        </div>
     );
 }

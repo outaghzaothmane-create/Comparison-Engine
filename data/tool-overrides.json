@@ -1,0 +1,8 @@
+{
+    "gitlab": {
+        "logo": "gitlab.svg"
+    },
+    "docker": {
+        "logo": "docker.svg"
+    }
+}
