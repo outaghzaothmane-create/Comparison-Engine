@@ -1,18 +1,27 @@
-import { MetadataRoute } from 'next'
-import items from '@/data/items.json'
+import { MetadataRoute } from 'next';
+import { getAllCategories, getAllPaidAlternativeSlugs } from '@/lib/data';
 
-const BASE_URL = process.env.Base_URL || 'https://opensource-alternatives.com'
+const BASE_URL = process.env.BASE_URL || 'https://opensource-alternatives.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    // Get unique paid tools
-    const uniqueSlugs = Array.from(new Set(items.map((item) => item.paid_alternative_slug)))
+    const categories = getAllCategories();
+    const paidAlternativeSlugs = getAllPaidAlternativeSlugs();
 
-    const alternativeRoutes = uniqueSlugs.map((slug) => ({
+    // Category routes
+    const categoryRoutes = categories.map((cat) => ({
+        url: `${BASE_URL}/category/${cat.slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.8,
+    }));
+
+    // Alternative-to routes
+    const alternativeRoutes = paidAlternativeSlugs.map((slug) => ({
         url: `${BASE_URL}/alternative-to/${slug}`,
         lastModified: new Date(),
         changeFrequency: 'weekly' as const,
         priority: 0.8,
-    }))
+    }));
 
     return [
         {
@@ -21,6 +30,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'daily',
             priority: 1,
         },
+        {
+            url: `${BASE_URL}/categories`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.9,
+        },
+        ...categoryRoutes,
         ...alternativeRoutes,
-    ]
+    ];
 }

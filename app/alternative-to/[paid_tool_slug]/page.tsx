@@ -79,7 +79,7 @@ export default async function ComparisonPage({ params }: PageProps) {
                         <ArrowLeft className="w-4 h-4 mr-2" /> Back to Search
                     </Link>
 
-                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                    <h1 className="text-3xl md:text-5xl font-bold text-white mb-6">
                         Open Source Alternatives to <span className="text-blue-400">{paidToolName}</span>
                     </h1>
                     <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
