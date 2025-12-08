@@ -18,8 +18,9 @@ export function Navbar() {
 
     return (
         <div className="sticky top-6 z-50 flex justify-center w-full px-4">
-            <nav className="w-full max-w-5xl rounded-full border border-white/10 bg-gradient-to-br from-zinc-900/90 to-black/90 backdrop-blur-md shadow-lg">
-                <div className="flex h-14 items-center justify-between px-6">
+            <nav className="w-full max-w-5xl rounded-full border border-white/10 bg-gradient-to-br from-zinc-900/90 to-black/90 backdrop-blur-md shadow-lg relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 pointer-events-none rounded-full" />
+                <div className="relative z-10 flex h-14 items-center justify-between px-6">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2">
                         <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20">
@@ -92,6 +93,6 @@ export function Navbar() {
                     </div>
                 )}
             </nav>
-        </div>
+        </div >
     );
 }
