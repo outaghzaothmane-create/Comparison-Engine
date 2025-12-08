@@ -20,7 +20,8 @@ export function ToolLogo({ slug, url, customLogo }: { slug: string; url: string;
     }
 
     // 2. Define URLs in priority order
-    const customUrl = customLogo ? `/logos/${customLogo}` : null;
+    // Ensure we handle the basePath for GitHub Pages hosting
+    const customUrl = customLogo ? `/Comparison-Engine/logos/${customLogo}` : null;
     const clearbitUrl = `https://logo.clearbit.com/${hostname}`;
     const simpleIconsUrl = `https://cdn.simpleicons.org/${cleanSlug}/white`; // Keep white for dark mode
     const googleUrl = `https://www.google.com/s2/favicons?domain=${hostname}&sz=128`;
