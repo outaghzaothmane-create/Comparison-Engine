@@ -12,16 +12,11 @@ export const metadata: Metadata = {
   description: 'Discover 1000+ open source alternatives to expensive enterprise software. Self-hostable, privacy-focused replacements for Slack, Notion, Jira, and more.',
 };
 
-interface PageProps {
-  searchParams: Promise<{ page?: string; query?: string }>;
-}
+// ... existing imports ...
 
-
-
-export default async function Home({ searchParams }: PageProps) {
-  const params = await searchParams;
-  const currentPage = parseInt(params.page || '1', 10);
-  const query = params.query || '';
+export default async function Home() {
+  const currentPage = 1;
+  const query = '';
   const { data: tools, total, page, totalPages } = getAllTools(currentPage, 20, query);
 
   return (
@@ -64,10 +59,15 @@ export default async function Home({ searchParams }: PageProps) {
           ))}
         </div>
 
-        {/* Pagination */}
-        <Suspense fallback={<div className="h-10" />}>
+        {/* Pagination - Disabled for Static Export */}
+        {/* <Suspense fallback={<div className="h-10" />}>
           <Pagination currentPage={page} totalPages={totalPages} />
-        </Suspense>
+        </Suspense> */}
+        <div className="flex justify-center mt-8">
+          <Link href="/categories" className="px-6 py-2 rounded-lg bg-zinc-900 border border-white/10 hover:bg-zinc-800 transition-colors text-sm text-zinc-400">
+            View All Categories
+          </Link>
+        </div>
       </div>
 
     </div>

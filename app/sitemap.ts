@@ -3,6 +3,8 @@ import { getAllCategories, getAllPaidAlternativeSlugs } from '@/lib/data';
 
 const BASE_URL = process.env.BASE_URL || 'https://opensource-alternatives.com';
 
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
     const categories = getAllCategories();
     const paidAlternativeSlugs = getAllPaidAlternativeSlugs();
