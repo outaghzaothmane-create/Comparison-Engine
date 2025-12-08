@@ -26,7 +26,7 @@ function formatStars(count?: number): string {
 
 export function ToolCard({ tool }: ToolCardProps) {
     return (
-        <Card className="bg-zinc-900/50 border-white/10 hover:border-white/20 transition-all duration-300 flex flex-col h-full group relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <Card className="bg-zinc-900/50 backdrop-blur-md border-white/10 hover:border-blue-500/50 transition-all duration-300 flex flex-col h-full group relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/10 dark:hover:shadow-blue-900/20">
             <Link
                 href={`/alternative-to/${tool.paid_alternative_slug}`}
                 className="absolute inset-0 z-10"
@@ -67,7 +67,10 @@ export function ToolCard({ tool }: ToolCardProps) {
                         </div>
                     </div>
                 </div>
-                <CardDescription className="text-zinc-400 line-clamp-2 mt-3 text-sm leading-relaxed overflow-hidden text-ellipsis h-[3em]">
+                <CardDescription
+                    className="text-zinc-400 line-clamp-2 mt-3 text-sm leading-relaxed overflow-hidden text-ellipsis h-[3em]"
+                    title={tool.description}
+                >
                     {tool.description}
                 </CardDescription>
             </CardHeader>
@@ -91,7 +94,7 @@ export function ToolCard({ tool }: ToolCardProps) {
                     href={tool.website_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors relative z-20"
+                    className="flex items-center gap-1.5 text-xs font-medium text-zinc-300 bg-white/5 hover:bg-white hover:text-black px-3 py-1.5 rounded-full transition-all duration-300 relative z-20 border border-white/10 hover:border-white shadow-sm"
                 >
                     Visit Site
                     <ArrowUpRight className="w-3 h-3" />
