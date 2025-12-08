@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools Directory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0f0f0f;
+            --sidebar-bg: #1a1a1a;
+            --card-bg: #1a1a1a;
+            --border-color: #333;
+            --text-primary: #fff;
+            --text-secondary: #a1a1aa;
+            --accent-color: #22c55e;
+            /* Green accent */
+            --accent-glow: rgba(34, 197, 94, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar (Desktop) */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 0;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            padding: 0 24px 24px 24px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item {
+            width: 100%;
+        }
+
+        .nav-btn {
+            width: 100%;
+            text-align: left;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-btn.active {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid var(--accent-color);
+            padding-left: 21px;
+            /* Adjust for border width to keep text aligned */
+        }
+
+        /* Mobile Header & Nav (Hidden on Desktop) */
+        .mobile-header {
+            display: none;
+            background: var(--sidebar-bg);
+            padding: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .mobile-nav {
+            display: none;
+            /* Flex when active */
+            overflow-x: auto;
+            gap: 12px;
+            padding-bottom: 4px;
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .mobile-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .mobile-pill {
+            white-space: nowrap;
+            padding: 8px 16px;
+            border-radius: 99px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .mobile-pill.active {
+            background: var(--accent-color);
+            color: black;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        /* Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .tool-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--text-secondary);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tool-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: #252525;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .tool-name h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .tool-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+        }
+
+        .tool-desc {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .mobile-header {
+                display: block;
+            }
+
+            .mobile-nav {
+                display: flex;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar (Desktop) -->
+    <aside class="sidebar">
+        <div class="brand">Directory.</div>
+        <nav>
+            <ul class="nav-links">
+                <li><button class="nav-btn active" onclick="filterTools('all', this)">All Tools</button></li>
+                <li><button class="nav-btn" onclick="filterTools('seo', this)">SEO</button></li>
+                <li><button class="nav-btn" onclick="filterTools('dev', this)">Development</button></li>
+                <li><button class="nav-btn" onclick="filterTools('marketing', this)">Marketing</button></li>
+                <li><button class="nav-btn" onclick="filterTools('automation', this)">Automation</button></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <div class="mobile-nav">
+            <button class="mobile-pill active" onclick="filterTools('all', this)">All</button>
+            <button class="mobile-pill" onclick="filterTools('seo', this)">SEO</button>
+            <button class="mobile-pill" onclick="filterTools('dev', this)">Dev</button>
+            <button class="mobile-pill" onclick="filterTools('marketing', this)">Marketing</button>
+            <button class="mobile-pill" onclick="filterTools('automation', this)">Automate</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1 id="pageTitle">All Tools</h1>
+            <p>Curated list of the best tech and tools.</p>
+        </div>
+
+        <div class="tools-grid" id="toolsGrid">
+            <!-- Items injected by JS -->
+        </div>
+    </main>
+
+    <script>
+        // Data
+        const toolsData = [
+            { name: "Ahrefs", category: "seo", icon: "fa-solid fa-chart-line", description: "Comprehensive SEO toolset for backlinks and keyword research." },
+            { name: "SEMrush", category: "seo", icon: "fa-solid fa-magnifying-glass-chart", description: "Online visibility management platform." },
+            { name: "VS Code", category: "dev", icon: "fa-solid fa-code", description: "Code editor redefined for modern web apps." },
+            { name: "GitHub", category: "dev", icon: "fa-brands fa-github", description: "Complete developer platform to build software." },
+            { name: "Google Ads", category: "marketing", icon: "fa-brands fa-google", description: "Online advertising platform by Google." },
+            { name: "Mailchimp", category: "marketing", icon: "fa-solid fa-envelope-open-text", description: "Marketing automation platform and email service." },
+            { name: "n8n", category: "automation", icon: "fa-solid fa-network-wired", description: "Workflow automation tool for technical people." },
+            { name: "Zapier", category: "automation", icon: "fa-solid fa-bolt", description: "Easy automation connecting your web apps." }
+        ];
+
+        const grid = document.getElementById('toolsGrid');
+        const pageTitle = document.getElementById('pageTitle');
+
+        function renderTools(filter) {
+            grid.innerHTML = '';
+
+            const filtered = filter === 'all'
+                ? toolsData
+                : toolsData.filter(t => t.category === filter);
+
+            filtered.forEach((tool, i) => {
+                const card = document.createElement('div');
+                card.className = 'tool-card';
+                card.style.animationDelay = `${i * 0.05}s`;
+
+                card.innerHTML = `
+                    <div class="tool-header">
+                        <div class="tool-icon">
+                            <i class="${tool.icon}"></i>
+                        </div>
+                        <div class="tool-name">
+                            <h3>${tool.name}</h3>
+                            <span class="tool-category">${tool.category}</span>
+                        </div>
+                    </div>
+                    <p class="tool-desc">${tool.description}</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterTools(category, btnElement) {
+            // Update UI Title
+            const titleMap = {
+                'all': 'All Tools',
+                'seo': 'SEO Tools',
+                'dev': 'Development Tools',
+                'marketing': 'Marketing Tools',
+                'automation': 'Automation Tools'
+            };
+            pageTitle.innerText = titleMap[category] || 'Tools';
+
+            // Active State Management (Desktop & Mobile)
+            // Ideally we'd sync them, but for simplicity we handle the clicked group
+            const isMobile = btnElement.classList.contains('mobile-pill');
+            const selector = isMobile ? '.mobile-pill' : '.nav-btn';
+
+            document.querySelectorAll(selector).forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            renderTools(category);
+        }
+
+        // Initialize
+        renderTools('all');
+    </script>
+</body>
+
+</html>

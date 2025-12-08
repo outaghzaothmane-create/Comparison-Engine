@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools & Tech Stack</title>
+    <!-- Using FontAwesome for placeholders, specifically CDN for simplicity -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #000;
+            --card-bg: #111;
+            --border-color: #333;
+            --text-primary: #fff;
+            --text-secondary: #aaa;
+            --accent-color: #4ade80; /* Greenish/Accent glow */
+            --accent-hover: rgba(74, 222, 128, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 20px;
+            border-radius: 999px; /* Pill shape */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #555;
+        }
+
+        .filter-btn.active {
+            background: var(--text-primary);
+            color: var(--bg-color);
+            border-color: var(--text-primary);
+        }
+
+        /* Grid Layout */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Mobile default */
+            gap: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .tools-grid {
+                grid-template-columns: repeat(3, 1fr); /* Desktop */
+            }
+        }
+
+        /* Card Style */
+        .tool-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: all 0.3s ease;
+            opacity: 0; /* For fade-in animation */
+            animation: fadeIn 0.5s forwards;
+            cursor: pointer;
+        }
+
+        .tool-card:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .tool-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            color: var(--text-primary);
+        }
+
+        .tool-info h3 {
+            margin: 0 0 4px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .tool-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .category-tag {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="filter-bar" id="filterContainer">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="seo">SEO</button>
+            <button class="filter-btn" data-filter="dev">Dev</button>
+            <button class="filter-btn" data-filter="marketing">Marketing</button>
+            <button class="filter-btn" data-filter="automation">Automation</button>
+        </div>
+
+        <div class="tools-grid" id="toolsGrid">
+            <!-- Cards will be injected here -->
+        </div>
+    </div>
+
+    <script>
+        // Data Structure
+        const toolsData = [
+            // SEO
+            {
+                name: "Ahrefs",
+                category: "seo",
+                icon: "fa-solid fa-chart-line",
+                description: "All-in-one SEO toolset for growing search traffic and optimizing websites."
+            },
+            {
+                name: "SEMrush",
+                category: "seo",
+                icon: "fa-solid fa-magnifying-glass-chart",
+                description: "Online visibility management platform ensuring robust digital marketing."
+            },
+            // Dev
+            {
+                name: "VS Code",
+                category: "dev",
+                icon: "fa-solid fa-code",
+                description: "Code editor redefined and optimized for building and debugging modern web apps."
+            },
+            {
+                name: "GitHub",
+                category: "dev",
+                icon: "fa-brands fa-github",
+                description: "Complete developer platform to build, scale, and deliver secure software."
+            },
+            // Marketing
+            {
+                name: "Google Ads",
+                category: "marketing",
+                icon: "fa-brands fa-google",
+                description: "Online advertising platform to display ads on Google's search engine results."
+            },
+            {
+                name: "Mailchimp",
+                category: "marketing",
+                icon: "fa-solid fa-envelope-open-text",
+                description: "Marketing automation platform and email marketing service for businesses."
+            },
+            // Automation
+            {
+                name: "n8n",
+                category: "automation",
+                icon: "fa-solid fa-network-wired",
+                description: "Fair-code workflow automation tool allowing distinct app interconnections."
+            },
+            {
+                name: "Zapier",
+                category: "automation",
+                icon: "fa-solid fa-bolt",
+                description: "Easy automation for busy people. Connects your web apps with a few clicks."
+            }
+        ];
+
+        // Elements
+        const grid = document.getElementById('toolsGrid');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+
+        // Function to render cards
+        function renderTools(filter = 'all') {
+            // Clear grid
+            grid.innerHTML = '';
+
+            const filteredTools = filter === 'all' 
+                ? toolsData 
+                : toolsData.filter(tool => tool.category === filter);
+
+            filteredTools.forEach((tool, index) => {
+                const card = document.createElement('div');
+                card.className = 'tool-card';
+                // Add staggered animation delay
+                card.style.animationDelay = `${index * 0.05}s`;
+
+                card.innerHTML = `
+                    <div class="tool-icon">
+                        <i class="${tool.icon}"></i>
+                    </div>
+                    <div class="tool-info">
+                        <h3>${tool.name}</h3>
+                        <p>${tool.description}</p>
+                        <span class="category-tag">${tool.category}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Filter Functionality
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all
+                filterBtns.forEach(b => b.classList.remove('active'));
+                // Add to clicked
+                btn.classList.add('active');
+
+                const filterValue = btn.getAttribute('data-filter');
+                renderTools(filterValue);
+            });
+        });
+
+        // Initial Render
+        renderTools();
+    </script>
+</body>
+</html>

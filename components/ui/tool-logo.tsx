@@ -13,8 +13,8 @@ export function ToolLogo({
     customLogo?: string;
     size?: number;
 }) {
-    const [currentUrlIndex, setCurrentUrlIndex] = useState(0);
-    const [imageLoaded, setImageLoaded] = useState(false);
+    const [finalSrc, setFinalSrc] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
     const [hasError, setHasError] = useState(false);
 
     // 1. Clean the slug to match Simple Icons naming convention
@@ -24,58 +24,88 @@ export function ToolLogo({
         .replace("-community", "")
         .replace("self-hosted-", "");
 
-    // 2. Define URLs in priority order
-    // Priority: Custom -> Simple Icons -> Google Favicons -> Fallback (Globe)
-    const domain = url.replace(/(^\w+:|^)\/\//, '').replace('www.', '').split('/')[0];
-
-    const logoUrls = [
-        customLogo ? `/Comparison-Engine/logos/${customLogo}` : null,
-        `https://cdn.simpleicons.org/${cleanSlug}/white`,
-        `https://www.google.com/s2/favicons?domain=${domain}&sz=128`
-    ].filter(Boolean) as string[];
-
-    const currentSrc = logoUrls[currentUrlIndex];
-
-    const handleError = () => {
-        if (currentUrlIndex < logoUrls.length - 1) {
-            setCurrentUrlIndex(prev => prev + 1);
-            setImageLoaded(false); // Reset loading state for next image
-        } else {
-            setHasError(true);
-        }
-    };
-
-    // Reset state if props change
+    // Resets on prop change
     useEffect(() => {
-        setCurrentUrlIndex(0);
-        setImageLoaded(false);
+        let isActive = true;
+        setFinalSrc(null);
+        setIsLoading(true);
         setHasError(false);
-    }, [slug, url, customLogo]);
+
+        const checkImage = (src: string): Promise<string> => {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.src = src;
+                img.onload = () => resolve(src);
+                img.onerror = () => reject(src);
+            });
+        };
+
+        const loadLogos = async () => {
+            // 2. Define URLs in priority order
+            const domain = url.replace(/(^\w+:|^)\/\//, '').replace('www.', '').split('/')[0];
+
+            const candidates = [
+                customLogo ? `/Comparison-Engine/logos/${customLogo}` : null,
+                `https://cdn.simpleicons.org/${cleanSlug}/white`,
+                `https://www.google.com/s2/favicons?domain=${domain}&sz=128`
+            ].filter(Boolean) as string[];
+
+            // Fire off checks in parallel
+            const promises = candidates.map(src => checkImage(src));
+
+            // Iterate in priority order, but using the already-started promises
+            // This avoids waterfall: we wait for P0. If P0 fails, we check P1 (which started same time as P0).
+            for (const p of promises) {
+                try {
+                    const validSrc = await p;
+                    if (isActive) {
+                        setFinalSrc(validSrc);
+                        setIsLoading(false);
+                        return; // Found the best available logo
+                    }
+                } catch (e) {
+                    // This candidate failed, continue to the next lower priority
+                    continue;
+                }
+            }
+
+            // If we get here, all failed
+            if (isActive) {
+                setHasError(true);
+                setIsLoading(false);
+            }
+        };
+
+        loadLogos();
+
+        return () => {
+            isActive = false;
+        };
+    }, [slug, url, customLogo]); // Re-run if props change
 
     return (
         <div
             className="relative flex-shrink-0 bg-zinc-800 rounded-xl flex items-center justify-center border border-zinc-700 shadow-sm overflow-hidden"
             style={{ width: size, height: size }}
         >
-            {/* Skeleton Loader - Visible while loading and no error yet */}
-            {!imageLoaded && !hasError && (
+            {/* Skeleton Loader - Visible while loading */}
+            {isLoading && (
                 <div className="absolute inset-0 bg-zinc-800 animate-pulse z-10" />
             )}
 
-            {!hasError ? (
+            {!isLoading && !hasError && finalSrc ? (
                 <img
-                    key={currentSrc} // Force re-render on src change
-                    src={currentSrc}
+                    src={finalSrc}
                     alt={`${slug} logo`}
-                    className={`w-full h-full object-contain p-2 transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                    onLoad={() => setImageLoaded(true)}
-                    onError={handleError}
+                    className="w-full h-full object-contain p-2 animate-in fade-in duration-300"
                     loading="lazy"
                 />
-            ) : (
-                // Fallback Globe Icon
-                <Globe className="w-1/2 h-1/2 text-zinc-500" />
-            )}
+            ) : !isLoading && hasError ? (
+                // Fallback Globe Icon or Text if error
+                <div className="w-full h-full flex items-center justify-center bg-zinc-800 text-zinc-500">
+                    <Globe className="w-1/2 h-1/2" />
+                </div>
+            ) : null}
         </div>
     );
 }

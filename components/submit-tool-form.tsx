@@ -61,7 +61,7 @@ ${paidAlternative}
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium text-zinc-200">
+                <label htmlFor="name" className="text-sm font-medium text-zinc-300">
                     Tool Name <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -71,12 +71,12 @@ ${paidAlternative}
                     placeholder="e.g. Plausible Analytics"
                     value={formData.name}
                     onChange={handleChange}
-                    className="bg-black/50 border-white/10 text-white placeholder:text-zinc-500 focus-visible:ring-blue-500"
+                    className="bg-black/40 border-white/10 text-white placeholder:text-zinc-500 focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:border-blue-500/50 transition-all rounded-lg h-12"
                 />
             </div>
 
             <div className="space-y-2">
-                <label htmlFor="url" className="text-sm font-medium text-zinc-200">
+                <label htmlFor="url" className="text-sm font-medium text-zinc-300">
                     Website URL <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -87,12 +87,12 @@ ${paidAlternative}
                     placeholder="https://example.com"
                     value={formData.url}
                     onChange={handleChange}
-                    className="bg-black/50 border-white/10 text-white placeholder:text-zinc-500 focus-visible:ring-blue-500"
+                    className="bg-black/40 border-white/10 text-white placeholder:text-zinc-500 focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:border-blue-500/50 transition-all rounded-lg h-12"
                 />
             </div>
 
             <div className="space-y-2">
-                <label htmlFor="license" className="text-sm font-medium text-zinc-200">
+                <label htmlFor="license" className="text-sm font-medium text-zinc-300">
                     Open Source License
                 </label>
                 <Input
@@ -101,12 +101,12 @@ ${paidAlternative}
                     placeholder="e.g. MIT, AGPLv3, Apache 2.0"
                     value={formData.license}
                     onChange={handleChange}
-                    className="bg-black/50 border-white/10 text-white placeholder:text-zinc-500 focus-visible:ring-blue-500"
+                    className="bg-black/40 border-white/10 text-white placeholder:text-zinc-500 focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:border-blue-500/50 transition-all rounded-lg h-12"
                 />
             </div>
 
             <div className="space-y-2">
-                <label htmlFor="paidAlternative" className="text-sm font-medium text-zinc-200">
+                <label htmlFor="paidAlternative" className="text-sm font-medium text-zinc-300">
                     Paid Alternative <span className="text-zinc-500">(Optional)</span>
                 </label>
                 <Input
@@ -115,12 +115,12 @@ ${paidAlternative}
                     placeholder="e.g. Google Analytics, Slack, Jira"
                     value={formData.paidAlternative}
                     onChange={handleChange}
-                    className="bg-black/50 border-white/10 text-white placeholder:text-zinc-500 focus-visible:ring-blue-500"
+                    className="bg-black/40 border-white/10 text-white placeholder:text-zinc-500 focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:border-blue-500/50 transition-all rounded-lg h-12"
                 />
             </div>
 
             <div className="space-y-2">
-                <label htmlFor="description" className="text-sm font-medium text-zinc-200">
+                <label htmlFor="description" className="text-sm font-medium text-zinc-300">
                     Description
                 </label>
                 <textarea
@@ -130,15 +130,19 @@ ${paidAlternative}
                     placeholder="Briefly describe what this tool does..."
                     value={formData.description}
                     onChange={handleChange}
-                    className="flex w-full rounded-md border border-white/10 bg-black/50 px-3 py-2 text-sm text-white shadow-sm placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex w-full rounded-lg border border-white/10 bg-black/40 px-3 py-3 text-sm text-white shadow-sm placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:border-blue-500/50 disabled:cursor-not-allowed disabled:opacity-50 transition-all resize-y"
                 />
             </div>
 
             <div className="pt-4">
-                <Button type="submit" className="w-full bg-white text-black hover:bg-zinc-200 py-6 text-base" disabled={isLoading}>
+                <Button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-500 hover:to-blue-400 py-6 text-base font-semibold shadow-lg hover:shadow-blue-500/25 hover:-translate-y-0.5 transition-all duration-200 border border-white/10 rounded-xl"
+                    disabled={isLoading}
+                >
                     {isLoading ? (
                         <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                             Redirecting...
                         </>
                     ) : (
