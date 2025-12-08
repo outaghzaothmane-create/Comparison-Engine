@@ -37,7 +37,7 @@ export function ComparisonCard({ item }: { item: Item }) {
                 <span className="sr-only">Visit {item.name} website</span>
             </a>
             <CardHeader className="pb-3 text-left">
-                <div className="flex items-start min-w-0">
+                <div className="flex items-start min-w-0 gap-4">
                     <ToolLogo slug={item.slug} url={item.website_url} customLogo={item.logo} />
                     <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start gap-2">

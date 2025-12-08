@@ -4,7 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Github } from 'lucide-react';
+import { Menu, X, Github, Box } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function Navbar() {
@@ -18,18 +18,14 @@ export function Navbar() {
 
     return (
         <div className="sticky top-6 z-50 flex justify-center w-full px-4">
-            <nav className="w-full max-w-5xl rounded-full border border-white/10 bg-black/50 backdrop-blur-md shadow-lg">
+            <nav className="w-full max-w-5xl rounded-full border border-white/10 bg-gradient-to-br from-zinc-900/90 to-black/90 backdrop-blur-md shadow-lg">
                 <div className="flex h-14 items-center justify-between px-6">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2">
-                        <Image
-                            src="/logo.svg"
-                            alt="Open Source Directory"
-                            width={150}
-                            height={28}
-                            className="h-7 w-auto"
-                            priority
-                        />
+                        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                            <Box className="w-5 h-5 text-blue-400" />
+                        </div>
+                        <span className="font-bold text-lg text-white tracking-tight">OS Directory</span>
                     </Link>
 
                     {/* Desktop Navigation */}

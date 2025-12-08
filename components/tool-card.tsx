@@ -34,7 +34,7 @@ export function ToolCard({ tool }: ToolCardProps) {
                 <span className="sr-only">View alternatives for {tool.name}</span>
             </Link>
             <CardHeader className="pb-3 text-left">
-                <div className="flex items-start min-w-0">
+                <div className="flex items-start min-w-0 gap-4">
                     <ToolLogo slug={tool.slug} url={tool.website_url} customLogo={tool.logo} />
                     <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start gap-2">

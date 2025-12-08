@@ -3,7 +3,7 @@ import { SearchBar } from "@/components/ui/search-bar"
 
 export function SearchHero() {
     return (
-        <div className="w-full flex flex-col items-center justify-center py-24 px-4 text-center relative overflow-hidden">
+        <div className="w-full flex flex-col items-center justify-center py-24 px-4 text-center relative overflow-visible">
             {/* Animated pulsing radial gradient background */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.15)_0%,transparent_70%)] animate-pulse [animation-duration:4s]" />
 
